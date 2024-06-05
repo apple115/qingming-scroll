@@ -49,54 +49,74 @@ const QingmingScroll = () => {
 
 
   const handleTouchStart = (e) => {
-    setDragging(true);
-    setStartPos({ x: e.touches[0].clientX, y: e.touches[0].clientY });
-  };
-
-  const handleTouchMove = (e) => {
-    if (dragging) {
-      const dx = e.touches[0].clientX - startPos.x;
-      const dy = e.touches[0].clientY - startPos.y;
-      setPosition((prev) => ({ x: prev.x + dx, y: prev.y + dy }));
+    if (e.touches.length === 2) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      setInitialDistance(Math.sqrt(dx * dx + dy * dy));
+      setLastScale(scale);
+    } else if (e.touches.length === 1) {
+      setDragging(true);
       setStartPos({ x: e.touches[0].clientX, y: e.touches[0].clientY });
     }
-  };
+    };
 
-  const handleTouchEnd = () => {
-    setDragging(false);
-  };
+    const handleTouchMove = (e) => {
+      if (e.touches.length === 2 && initialDistance !== null) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      const newScale = (distance / initialDistance) * lastScale;
+      setScale(newScale);
+    } else if (dragging && e.touches.length === 1) {
+      const dx = e.touches[0].clientX - startPos.x;
+      const dy = e.touches[0].clientY - startPos.y;
+      setPosition((prev) => ({
+        x: prev.x + dx,
+        y: prev.y + dy
+      }));
+      setStartPos({ x: e.touches[0].clientX, y: e.touches[0].clientY });
+    }
+    };
+
+    const handleTouchEnd = () => {
+      setDragging(false);
+      setInitialDistance(null);
+    };
+
+
 
     const handleMouseDown = (e) => {
-    setDragging(true);
-    setStartPos({ x: e.clientX, y: e.clientY }); // 使用 clientX 和 clientY 获取鼠标位置
+      setDragging(true);
+      setStartPos({ x: e.clientX, y: e.clientY }); // 使用 clientX 和 clientY 获取鼠标位置
     };
 
     const handleMouseMove = (e) => {
-    if (dragging) {
+      if (dragging) {
         const dx = e.clientX - startPos.x;
         const dy = e.clientY - startPos.y;
         setPosition((prev) => ({ x: prev.x + dx, y: prev.y + dy }));
         setStartPos({ x: e.clientX, y: e.clientY });
-    }
+      }
     };
 
     const handleMouseUp = () => {
-    setDragging(false);
+      setDragging(false);
     };
 
 
-  return (
-    <canvas
-      ref={canvasRef}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-      onMouseDown={handleMouseDown} // 使用 onMouseDown、onMouseMove、onMouseUp 处理鼠标事件
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      style={{ touchAction: 'none' }}
-    />
-  );
-};
 
-export default QingmingScroll;
+    return (
+      <canvas
+        ref={canvasRef}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onMouseDown={handleMouseDown} // 使用 onMouseDown、onMouseMove、onMouseUp 处理鼠标事件
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        style={{ touchAction: 'none' }}
+      />
+    );
+  };
+
+  export default QingmingScroll;
