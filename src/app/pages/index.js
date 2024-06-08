@@ -87,11 +87,31 @@ const QingmingScroll = () => {
       setPosition((prev) => ({ x: prev.x + dx, y: prev.y + dy }));
       setStartPos({ x: e.touches[0].clientX, y: e.touches[0].clientY });
     }
-  };
+    };
 
-  const handleTouchEnd = () => {
-    setDragging(false);
-  };
+    const handleTouchMove = (e) => {
+      if (e.touches.length === 2 && initialDistance !== null) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      const newScale = (distance / initialDistance) * lastScale;
+      setScale(newScale);
+    } else if (dragging && e.touches.length === 1) {
+      const dx = e.touches[0].clientX - startPos.x;
+      const dy = e.touches[0].clientY - startPos.y;
+      setPosition((prev) => ({
+        x: prev.x + dx,
+        y: prev.y + dy
+      }));
+      setStartPos({ x: e.touches[0].clientX, y: e.touches[0].clientY });
+    }
+    };
+
+    const handleTouchEnd = () => {
+      setDragging(false);
+      setInitialDistance(null);
+    };
+
 
   const handleMouseDown = (e) => {
     setDragging(true);
@@ -144,4 +164,4 @@ const QingmingScroll = () => {
   );
 };
 
-export default QingmingScroll;
+  export default QingmingScroll;
