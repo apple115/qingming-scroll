@@ -5,7 +5,6 @@ const tileSize = 512;
 
 const QingmingScroll = () => {
   const canvasRef = useRef(null);
-  const [image, setImage] = useState(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [scale, setScale] = useState(1);
   const [dragging, setDragging] = useState(false);
@@ -27,10 +26,10 @@ const QingmingScroll = () => {
     };
 
     const renderTiles = () => {
-      const visibleRows = Math.ceil(canvas.height / (tileSize * scale));
-      const visibleCols = Math.ceil(canvas.width / (tileSize * scale));
-      const startRow = Math.floor(-position.y / (tileSize * scale));
-      const startCol = Math.floor(-position.x / (tileSize * scale));
+      const visibleRows = Math.ceil(canvas.height / (tileSize * scale))+2;
+      const visibleCols = Math.ceil(canvas.width / (tileSize * scale))+2;
+      const startRow = Math.floor(-position.y / (tileSize * scale))-1;
+      const startCol = Math.floor(-position.x / (tileSize * scale))-1;
 
       context.clearRect(0, 0, canvas.width, canvas.height);
       for (let row = startRow; row < startRow + visibleRows; row++) {
@@ -89,28 +88,13 @@ const QingmingScroll = () => {
     }
     };
 
-    const handleTouchMove = (e) => {
-      if (e.touches.length === 2 && initialDistance !== null) {
-      const dx = e.touches[0].clientX - e.touches[1].clientX;
-      const dy = e.touches[0].clientY - e.touches[1].clientY;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-      const newScale = (distance / initialDistance) * lastScale;
-      setScale(newScale);
-    } else if (dragging && e.touches.length === 1) {
-      const dx = e.touches[0].clientX - startPos.x;
-      const dy = e.touches[0].clientY - startPos.y;
-      setPosition((prev) => ({
-        x: prev.x + dx,
-        y: prev.y + dy
-      }));
-      setStartPos({ x: e.touches[0].clientX, y: e.touches[0].clientY });
-    }
-    };
 
     const handleTouchEnd = () => {
       setDragging(false);
-      setInitialDistance(null);
     };
+
+
+
 
 
   const handleMouseDown = (e) => {
@@ -159,7 +143,7 @@ const QingmingScroll = () => {
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseLeave}
       onWheel={handleWheel}
-      style={{ touchAction: "none", cursor: "grab" }}
+      style={{ touchAction: "none", cursor: dragging ? "grabbing" : "grab" }}
     />
   );
 };
