@@ -21,6 +21,18 @@ const sounds = {
 
   "0-23": "wind.mp3",
   "0-24": "people.wav",
+  "0-25": "people.wav",
+
+  "0-26": "wind.mp3",
+  "0-27": "wind.mp3",
+
+  "0-28": "water.wav",
+
+  "0-29": "wind.mp3",
+
+  "0-29": "people.wav",
+
+
 
   "2-36": "people.wav",
   "2-37": "people.wav",
@@ -45,7 +57,6 @@ const QingmingScroll = () => {
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
   const [touchStartDistance, setTouchStartDistance] = useState(0);
   const currentAudios = useRef({});
-  const needsRender = useRef(true);
 
   const loadTile = (row, col, context) => {
     const img = new Image();
@@ -63,7 +74,7 @@ const QingmingScroll = () => {
     const context = canvas.getContext("2d");
 
     const visibleRows = Math.ceil(canvas.height / (tileSize * scale)) + 2;
-    const visibleCols = Math.ceil(canvas.width / (tileSize * scale)) + 2;
+    const visibleCols = Math.ceil(canvas.width / (tileSize * scale)) + 10;
     const startRow = Math.floor(-position.y / (tileSize * scale)) - 1;
     const startCol = Math.floor(-position.x / (tileSize * scale)) - 1;
     const visibleSounds = new Set();
